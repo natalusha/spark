@@ -1,0 +1,4 @@
+# ignore ALL files in ANY directory named imdbdata
+imdbdata/
+# ignore ALL files in ANY directory named output
+output/
