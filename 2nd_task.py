@@ -2,7 +2,7 @@
 ак вот нужно найти по топ-10 фильмов каждого жанра (результат должен быть в одном файлике =))"""
 from pyspark.sql import SparkSession
 from pyspark.sql.window import Window
-from pyspark.sql.functions import dense_rank, col
+from pyspark.sql.functions import dense_rank, col, explode, split
 
 spark = SparkSession.builder.appName("TotalOrdersPErRegionCountry").getOrCreate()
 rating_file = "imdbdata/title.ratings.tsv/data.tsv"
@@ -22,9 +22,7 @@ title_df = (
     .load(title_file)
 )
 
-windowSpec = Window.partitionBy(title_df["genres"]).orderBy(
-    rating_df["averageRating"].desc()
-)
+windowSpec = Window.partitionBy("genre").orderBy(rating_df["averageRating"].desc())
 
 top10genres = (
     rating_df.join(title_df, rating_df.tconst == title_df.tconst, "inner")
@@ -32,13 +30,13 @@ top10genres = (
         rating_df["tconst"],
         title_df["primaryTitle"],
         title_df["startYear"],
-        title_df["genres"],
+        (explode(split(title_df.genres, ",")).alias("genre")),
         rating_df["averageRating"],
         rating_df["numVotes"],
     )
     .filter((title_df.titleType == "movie") & (rating_df.numVotes > 100000))
     .withColumn("dense_rank", dense_rank().over(windowSpec))
-    .sort("genres", "dense_rank")
+    .sort("genre", "dense_rank")
 )
 res = top10genres.filter(col("dense_rank") <= 10).drop("dense_rank")
 res.coalesce(1).write.option("header", "true").option("inferSchema", "true").csv(
