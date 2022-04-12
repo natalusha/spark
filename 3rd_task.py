@@ -25,7 +25,10 @@ title_df = (
     .load(title_file)
 )
 windowSpec = Window.partitionBy("genre", "yearRange").orderBy(
-    col("yearRange").desc(), "genre", rating_df["averageRating"].desc()
+    col("yearRange").desc(),
+    "genre",
+    rating_df["averageRating"].desc(),
+    rating_df["numVotes"].desc(),
 )
 df = (
     rating_df.join(title_df, rating_df.tconst == title_df.tconst, "inner")
@@ -54,5 +57,5 @@ nullyear_df = (
 )
 res = nullyear_df.drop("nullYear", "dense_rank")
 res.coalesce(1).write.option("header", "true").option("inferSchema", "true").csv(
-    "output/top10genresnow50s"
+    "output/top10genresnow50sNEW"
 )
