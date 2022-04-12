@@ -22,7 +22,9 @@ title_df = (
     .load(title_file)
 )
 
-windowSpec = Window.partitionBy("genre").orderBy(rating_df["averageRating"].desc())
+windowSpec = Window.partitionBy("genre").orderBy(
+    rating_df["averageRating"].desc(), rating_df["numVotes"].desc()
+)
 
 top10genres = (
     rating_df.join(title_df, rating_df.tconst == title_df.tconst, "inner")
@@ -40,5 +42,5 @@ top10genres = (
 )
 res = top10genres.filter(col("dense_rank") <= 10).drop("dense_rank")
 res.coalesce(1).write.option("header", "true").option("inferSchema", "true").csv(
-    "output/top10genres"
+    "output/top10genresNEW"
 )
