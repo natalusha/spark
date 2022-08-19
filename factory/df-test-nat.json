@@ -1,0 +1,9 @@
+{
+	"name": "df-test-nat",
+	"location": "canadaeast",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "58ebb927-c616-4e75-b7ee-03d8496e9d86",
+		"tenantId": "2252fe9f-fbfc-4afb-93a1-dad37c4aed1d"
+	}
+}
