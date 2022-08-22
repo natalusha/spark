@@ -10,7 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "HttpServerLocation",
-				"relativeUrl": "https://datasets.imdbws.com/title.ratings.tsv.gz"
+				"relativeUrl": "title.ratings.tsv.gz"
 			},
 			"columnDelimiter": "\t",
 			"compressionCodec": "gzip",
