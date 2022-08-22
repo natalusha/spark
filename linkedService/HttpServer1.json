@@ -1,0 +1,13 @@
+{
+	"name": "HttpServer1",
+	"properties": {
+		"description": "data for spark queries about movies",
+		"annotations": [],
+		"type": "HttpServer",
+		"typeProperties": {
+			"url": "https://datasets.imdbws.com/",
+			"enableServerCertificateValidation": true,
+			"authenticationType": "Anonymous"
+		}
+	}
+}
