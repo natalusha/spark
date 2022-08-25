@@ -1,0 +1,79 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "blob_title_ratings",
+						"type": "DatasetReference"
+					},
+					"name": "ratingDf"
+				},
+				{
+					"dataset": {
+						"referenceName": "blob_title_basics",
+						"type": "DatasetReference"
+					},
+					"name": "titleDf"
+				}
+			],
+			"sinks": [],
+			"transformations": [
+				{
+					"name": "join1"
+				},
+				{
+					"name": "select1"
+				},
+				{
+					"name": "sort1"
+				},
+				{
+					"name": "filter1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          tconst as string,",
+				"          averageRating as double,",
+				"          numVotes as integer",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> ratingDf",
+				"source(output(",
+				"          tconst as string,",
+				"          titleType as string,",
+				"          primaryTitle as string,",
+				"          originalTitle as string,",
+				"          isAdult as boolean,",
+				"          startYear as short,",
+				"          endYear as string,",
+				"          runtimeMinutes as string,",
+				"          genres as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     ignoreNoFilesFound: false) ~> titleDf",
+				"ratingDf, titleDf join(ratingDf@tconst==titleDf@tconst,",
+				"     joinType:'cross',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'right')~> join1",
+				"join1 select(mapColumn(",
+				"          tconst = ratingDf@tconst,",
+				"          averageRating,",
+				"          numVotes,",
+				"          primaryTitle,",
+				"          startYear",
+				"     ),",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> select1",
+				"filter1 sort(desc(numVotes, true)) ~> sort1",
+				"select1 filter(numVotes>=100000) ~> filter1"
+			]
+		}
+	}
+}
