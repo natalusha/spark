@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
+				"folderPath": "ratings",
 				"container": "input"
 			},
 			"columnDelimiter": "\t",
