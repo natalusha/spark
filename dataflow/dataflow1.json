@@ -40,13 +40,6 @@
 						"type": "DatasetReference"
 					},
 					"name": "top60s"
-				},
-				{
-					"dataset": {
-						"referenceName": "test_out",
-						"type": "DatasetReference"
-					},
-					"name": "sink1"
 				}
 			],
 			"transformations": [
@@ -66,9 +59,6 @@
 					"name": "rank1"
 				},
 				{
-					"name": "filter2"
-				},
-				{
 					"name": "filter10years"
 				},
 				{
@@ -85,6 +75,9 @@
 				},
 				{
 					"name": "top60sless100"
+				},
+				{
+					"name": "top100alltime"
 				}
 			],
 			"scriptLines": [
@@ -128,7 +121,6 @@
 				"select1 filter(numVotes>=100) ~> filter1",
 				"resDf rank(desc(numVotes, true),",
 				"     output(rankMovie as long)) ~> rank1",
-				"rank1 filter(rankMovie<=100) ~> filter2",
 				"resDf filter(startYear>=year(currentDate())-10) ~> filter10years",
 				"filter10years rank(desc(numVotes, true),",
 				"     output(rank10years as long)) ~> rank10years",
@@ -137,12 +129,13 @@
 				"filter60s rank(desc(numVotes, true),",
 				"     output(rank60s as long)) ~> rank60s",
 				"rank60s filter(rank60s<=100) ~> top60sless100",
-				"filter2 sink(allowSchemaDrift: true,",
+				"rank1 filter(rankMovie<=100) ~> top100alltime",
+				"top100alltime sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true,",
-				"     saveOrder: 1) ~> top100all",
+				"     saveOrder: 0) ~> top100all",
 				"top100lt10years sink(allowSchemaDrift: true,",
 				"     validateSchema: false,",
 				"     format: 'parquet',",
@@ -152,12 +145,7 @@
 				"     validateSchema: false,",
 				"     format: 'parquet',",
 				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true) ~> top60s",
-				"filter2 sink(allowSchemaDrift: true,",
-				"     validateSchema: false,",
-				"     skipDuplicateMapInputs: true,",
-				"     skipDuplicateMapOutputs: true,",
-				"     partitionBy('hash', 1)) ~> sink1"
+				"     skipDuplicateMapOutputs: true) ~> top60s"
 			]
 		}
 	}
