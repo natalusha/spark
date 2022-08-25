@@ -27,13 +27,111 @@
 					},
 					"sink": {
 						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
 						"formatSettings": {
 							"type": "DelimitedTextWriteSettings",
 							"quoteAllText": true,
 							"fileExtension": ".csv"
 						}
 					},
-					"enableStaging": false
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "tconst",
+									"type": "String"
+								},
+								"sink": {
+									"name": "tconst",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "titleType",
+									"type": "String"
+								},
+								"sink": {
+									"name": "titleType",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "primaryTitle",
+									"type": "String"
+								},
+								"sink": {
+									"name": "primaryTitle",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "originalTitle",
+									"type": "String"
+								},
+								"sink": {
+									"name": "originalTitle",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "isAdult",
+									"type": "String"
+								},
+								"sink": {
+									"name": "isAdult",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "startYear",
+									"type": "String"
+								},
+								"sink": {
+									"name": "startYear",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "endYear",
+									"type": "String"
+								},
+								"sink": {
+									"name": "endYear",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "runtimeMinutes",
+									"type": "String"
+								},
+								"sink": {
+									"name": "runtimeMinutes",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "genres",
+									"type": "String"
+								},
+								"sink": {
+									"name": "genres",
+									"type": "String"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
@@ -43,7 +141,7 @@
 				],
 				"outputs": [
 					{
-						"referenceName": "title_basics",
+						"referenceName": "blob_title_basics",
 						"type": "DatasetReference"
 					}
 				]
@@ -71,11 +169,63 @@
 							"type": "DelimitedTextReadSettings"
 						}
 					},
-					"enableStaging": false
+					"sink": {
+						"type": "DelimitedTextSink",
+						"storeSettings": {
+							"type": "AzureBlobStorageWriteSettings"
+						},
+						"formatSettings": {
+							"type": "DelimitedTextWriteSettings",
+							"quoteAllText": true,
+							"fileExtension": ".csv"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"name": "tconst",
+									"type": "String"
+								},
+								"sink": {
+									"name": "tconst",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "averageRating",
+									"type": "String"
+								},
+								"sink": {
+									"name": "averageRating",
+									"type": "String"
+								}
+							},
+							{
+								"source": {
+									"name": "numVotes",
+									"type": "String"
+								},
+								"sink": {
+									"name": "numVotes",
+									"type": "String"
+								}
+							}
+						]
+					}
 				},
 				"inputs": [
 					{
 						"referenceName": "title_ratings",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "blob_title_ratings",
 						"type": "DatasetReference"
 					}
 				]

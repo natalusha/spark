@@ -6,37 +6,30 @@
 			"sources": [
 				{
 					"dataset": {
-						"referenceName": "title_basics",
+						"referenceName": "blob_title_basics",
 						"type": "DatasetReference"
 					},
 					"name": "source1"
 				},
 				{
 					"dataset": {
-						"referenceName": "title_ratings",
+						"referenceName": "blob_title_ratings",
 						"type": "DatasetReference"
 					},
 					"name": "source2"
 				}
 			],
 			"sinks": [],
-			"transformations": [
-				{
-					"name": "join1"
-				}
-			],
+			"transformations": [],
 			"scriptLines": [
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
+				"     limit: 100,",
 				"     ignoreNoFilesFound: false) ~> source1",
 				"source(allowSchemaDrift: true,",
 				"     validateSchema: false,",
-				"     ignoreNoFilesFound: false) ~> source2",
-				"source1, source2 join(ERROR_FUNCTION('') == ERROR_FUNCTION(''),",
-				"     joinType:'inner',",
-				"     matchType:'exact',",
-				"     ignoreSpaces: false,",
-				"     broadcast: 'auto')~> join1"
+				"     limit: 100,",
+				"     ignoreNoFilesFound: false) ~> source2"
 			]
 		}
 	}
