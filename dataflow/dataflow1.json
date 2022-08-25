@@ -19,7 +19,36 @@
 					"name": "titleDf"
 				}
 			],
-			"sinks": [],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "top100all",
+						"type": "DatasetReference"
+					},
+					"name": "top100all"
+				},
+				{
+					"dataset": {
+						"referenceName": "top10years",
+						"type": "DatasetReference"
+					},
+					"name": "top10years"
+				},
+				{
+					"dataset": {
+						"referenceName": "top60s",
+						"type": "DatasetReference"
+					},
+					"name": "top60s"
+				},
+				{
+					"dataset": {
+						"referenceName": "test_out",
+						"type": "DatasetReference"
+					},
+					"name": "sink1"
+				}
+			],
 			"transformations": [
 				{
 					"name": "join1"
@@ -28,10 +57,34 @@
 					"name": "select1"
 				},
 				{
-					"name": "sort1"
+					"name": "resDf"
 				},
 				{
 					"name": "filter1"
+				},
+				{
+					"name": "rank1"
+				},
+				{
+					"name": "filter2"
+				},
+				{
+					"name": "filter10years"
+				},
+				{
+					"name": "rank10years"
+				},
+				{
+					"name": "top100lt10years"
+				},
+				{
+					"name": "filter60s"
+				},
+				{
+					"name": "rank60s"
+				},
+				{
+					"name": "top60sless100"
 				}
 			],
 			"scriptLines": [
@@ -71,8 +124,40 @@
 				"     ),",
 				"     skipDuplicateMapInputs: true,",
 				"     skipDuplicateMapOutputs: true) ~> select1",
-				"filter1 sort(desc(numVotes, true)) ~> sort1",
-				"select1 filter(numVotes>=100000) ~> filter1"
+				"filter1 sort(desc(numVotes, true)) ~> resDf",
+				"select1 filter(numVotes>=100) ~> filter1",
+				"resDf rank(desc(numVotes, true),",
+				"     output(rankMovie as long)) ~> rank1",
+				"rank1 filter(rankMovie<=100) ~> filter2",
+				"resDf filter(startYear>=year(currentDate())-10) ~> filter10years",
+				"filter10years rank(desc(numVotes, true),",
+				"     output(rank10years as long)) ~> rank10years",
+				"rank10years filter(rank10years<=100) ~> top100lt10years",
+				"resDf filter( between(startYear,1960,1969)) ~> filter60s",
+				"filter60s rank(desc(numVotes, true),",
+				"     output(rank60s as long)) ~> rank60s",
+				"rank60s filter(rank60s<=100) ~> top60sless100",
+				"filter2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     saveOrder: 1) ~> top100all",
+				"top100lt10years sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> top10years",
+				"top60sless100 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     format: 'parquet',",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true) ~> top60s",
+				"filter2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     skipDuplicateMapInputs: true,",
+				"     skipDuplicateMapOutputs: true,",
+				"     partitionBy('hash', 1)) ~> sink1"
 			]
 		}
 	}
